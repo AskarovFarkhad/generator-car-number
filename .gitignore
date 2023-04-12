@@ -1,0 +1,36 @@
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+
+### NetBeans ###
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# Eclipse
+target
+/migrator/
+
+# Ignore Gradle build output directory
+build
+.openapi-generator
+/product-service/src/main/resources/application.properties
+/seller-info-service/src/main/resources/application.properties
