@@ -1,0 +1,6 @@
+server:
+  port: 8080
+
+spring:
+  app:
+    url: /public/api/v1/numbers

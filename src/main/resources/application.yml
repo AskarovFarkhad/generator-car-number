@@ -7,6 +7,9 @@ spring:
       prefix: /templates/
       suffix: .html
 
+  app:
+    url: /public/api/v1/numbers
+
   datasource:
     url: jdbc:postgresql://localhost:5432/car_numbers
     username: postgres

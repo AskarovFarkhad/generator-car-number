@@ -13,22 +13,23 @@ import java.util.UUID;
 @EqualsAndHashCode(exclude = {"id", "region", "country"})
 public class CarNumber {
 
-    private UUID id;
+    @Builder.Default
+    private UUID id = UUID.randomUUID();
 
-    private String frontSeries;
+    private String series;
 
     private String registrationNumber;
 
-    private String backSeries;
+    @Builder.Default
+    private String region = "116";
 
-    private String region;
-
-    private String country;
+    @Builder.Default
+    private String country = "RUS";
 
     private LocalDateTime createdAt;
 
     @Override
     public String toString() {
-        return frontSeries + registrationNumber + backSeries + " " + region + " " + country;
+        return series.charAt(0) + registrationNumber + series.charAt(1) + series.charAt(2) + " " + region + " " + country;
     }
 }

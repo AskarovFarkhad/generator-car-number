@@ -1,7 +1,6 @@
 package com.example.numbergenerator.util;
 
 import com.example.numbergenerator.model.CarNumber;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -18,46 +17,34 @@ public class GeneratorCarNumber {
 
     private static final int MAX_DIGIT = 999;
 
-    private static final String REGION = "116";
-
-    private static final String COUNTRY = "RUS";
-
     private static final Random random = new Random();
 
-    private final Set<CarNumber> generatedNumbers = new HashSet<>();
-
-    @Getter
-    private static final CarNumber firstCarNumber = CarNumber.builder()
-            .id(UUID.randomUUID())
-            .frontSeries("A")
-            .registrationNumber("000")
-            .backSeries("AA")
-            .region(REGION)
-            .country(COUNTRY)
-            .createdAt(LocalDateTime.now())
-            .build();
+    private static final Set<CarNumber> generatedNumbers = new HashSet<>();
 
     private static final Queue<CarNumber> offset = new ArrayDeque<>();
 
-    static {
-        offset.add(firstCarNumber);
-    }
+    public static CarNumber next() {
+        Optional<CarNumber> optPreviousCarNumber = Optional.ofNullable(offset.poll());
+        CarNumber nextCarNumber;
 
-    public CarNumber next() {
-        CarNumber previousCarNumber = offset.poll();
-        CarNumber nextCarNumber = null;
+        try {
+            CarNumber previousCarNumber = optPreviousCarNumber
+                    .orElseThrow(() -> new NoSuchElementException("Don't such previous car number"));
 
-        if (previousCarNumber != null) {
             do {
                 nextCarNumber = generateNextCarNumber(previousCarNumber);
             } while (generatedNumbers.contains(nextCarNumber));
+
             generatedNumbers.add(nextCarNumber);
             offset.add(nextCarNumber);
+            return nextCarNumber;
+        } catch (NoSuchElementException e) {
+            log.error("NoSuchElementException: {}. Will be generate random car number", e.getMessage());
+            return random();
         }
-        return nextCarNumber;
     }
 
-    public CarNumber random() {
+    public static CarNumber random() {
         offset.poll();
         CarNumber carNumber;
 
@@ -69,48 +56,40 @@ public class GeneratorCarNumber {
         return carNumber;
     }
 
-    private CarNumber generateNextCarNumber(CarNumber previousCarNumber) {
+    private static CarNumber generateNextCarNumber(CarNumber previousCarNumber) {
         int digit = Integer.parseInt(previousCarNumber.getRegistrationNumber()) + 1;
 
         if (digit < 1000) {
             return CarNumber.builder()
-                    .id(UUID.randomUUID())
-                    .frontSeries(previousCarNumber.getFrontSeries())
+                    .series(previousCarNumber.getSeries())
                     .registrationNumber(String.format("%03d", digit))
-                    .backSeries(previousCarNumber.getBackSeries())
-                    .region(REGION)
-                    .country(COUNTRY)
                     .createdAt(LocalDateTime.now())
                     .build();
         } else {
             return null;
-           // TODO реализовать генерацию след номера
+            // TODO реализовать генерацию след номера
         }
     }
 
-    private CarNumber generateRandomCarNumber() {
+    private static CarNumber generateRandomCarNumber() {
         int digit = random.nextInt(MAX_DIGIT + 1);
 
         return CarNumber.builder()
-                .id(UUID.randomUUID())
-                .frontSeries(LETTERS[getRandomIndex()])
+                .series(LETTERS[getRandomIndex()] + LETTERS[getRandomIndex()] + LETTERS[getRandomIndex()])
                 .registrationNumber(String.format("%03d", digit))
-                .backSeries(LETTERS[getRandomIndex()] + LETTERS[getRandomIndex()])
-                .region(REGION)
-                .country(COUNTRY)
                 .createdAt(LocalDateTime.now())
                 .build();
     }
 
-    private int getRandomIndex() {
+    private static int getRandomIndex() {
         return random.nextInt(MAX_LETTER_INDEX + 1);
     }
 
-    public void setOffset(CarNumber carNumber) {
+    public static void setOffset(CarNumber carNumber) {
         offset.add(carNumber);
     }
 
-    public void removeOffset() {
+    public static void removeOffset() {
         offset.poll();
     }
 }

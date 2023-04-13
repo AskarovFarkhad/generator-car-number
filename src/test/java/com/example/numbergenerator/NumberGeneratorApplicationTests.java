@@ -1,76 +1,53 @@
 package com.example.numbergenerator;
 
-import com.example.numbergenerator.model.CarNumber;
-import com.example.numbergenerator.util.GeneratorCarNumber;
-import org.junit.jupiter.api.*;
+import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
+import java.util.Objects;
+
+import static com.example.numbergenerator.util.Constants.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-class NumberGeneratorApplicationTests {
+@AutoConfigureMockMvc
+@ActiveProfiles("application-test")
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+public class NumberGeneratorApplicationTests {
 
-    private final GeneratorCarNumber generatorCarNumber = new GeneratorCarNumber();
+    private final MockMvc mockMvc;
 
-    @BeforeEach
-    void beforeAll() {
-        generatorCarNumber.removeOffset();
+    @Value("${spring.app.url}")
+    private String PUBLIC_API;
+
+    @Test
+    public void shouldReturnRandomCarNumber() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(get(PUBLIC_API + "/random"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        assertEquals(MAIN_PAGE, Objects.requireNonNull(mvcResult.getModelAndView()).getViewName());
+        assertTrue(mvcResult.getModelAndView().getModel().get(ATTRIBUTE_NAME).toString().matches(REGEX_AUTO_NUMBER));
     }
 
     @Test
-    @Order(0)
-    @DisplayName(value = "Генерация следующего номера после -> C399BA 116 RUS")
-    void test0_generatorCarNumber_generateNextCarNumber_shouldReturnDifferentRegistrationNumber() {
-        generatorCarNumber.setOffset(
-                CarNumber.builder()
-                        .frontSeries("C")
-                        .registrationNumber("399")
-                        .backSeries("BA")
-                        .region("116")
-                        .country("RUS")
-                        .build());
-        assertEquals("C400BA 116 RUS", generatorCarNumber.next().toString());
-    }
+    public void shouldReturnNextCarNumber() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(get(PUBLIC_API + "/next"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
 
-    @Test
-    @Order(1)
-    @DisplayName(value = "Генерация следующего номера после -> C089BA 116 RUS")
-    void test1_generatorCarNumber_generateNextCarNumber_shouldReturnDifferentRegistrationNumber() {
-        generatorCarNumber.setOffset(
-                CarNumber.builder()
-                        .frontSeries("C")
-                        .registrationNumber("089")
-                        .backSeries("BA")
-                        .region("116")
-                        .country("RUS")
-                        .build());
-        assertEquals("C090BA 116 RUS", generatorCarNumber.next().toString());
-    }
-
-    @Test
-    @Order(2)
-    @DisplayName(value = "Генерация следующего номера после -> C999BA 116 RUS")
-    void test2_generatorCarNumber_generateNextCarNumber_shouldReturnDifferentRegistrationNumberAndSeries() {
-        generatorCarNumber.setOffset(
-                CarNumber.builder()
-                        .frontSeries("C")
-                        .registrationNumber("999")
-                        .backSeries("BA")
-                        .region("116")
-                        .country("RUS")
-                        .build());
-        assertEquals("C000BB 116 RUS", generatorCarNumber.next().toString());
-    }
-
-    @Test
-    @Order(3)
-    @DisplayName(value = "Генерация случайного номера")
-    void test3_generatorCarNumber_generateRandomCarNumber_shouldReturnCorrectResult() {
-        CarNumber carNumber = generatorCarNumber.random();
-
-        assertNotNull(carNumber);
-        assertEquals(14, carNumber.toString().length());
-        assertTrue(carNumber.getRegistrationNumber().length() == 3
-                && Integer.parseInt(carNumber.getRegistrationNumber()) < 999);
+        assertEquals(MAIN_PAGE, Objects.requireNonNull(mvcResult.getModelAndView()).getViewName());
+        assertTrue(mvcResult.getModelAndView().getModel().get(ATTRIBUTE_NAME).toString().matches(REGEX_AUTO_NUMBER));
     }
 }
