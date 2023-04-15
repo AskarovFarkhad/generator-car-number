@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Генератор автомобильных номеров</title>
+    <style>
+        body {
+            text-align: center;
+            font-size: 24px;
+        }
+
+        form {
+            display: inline-block;
+            margin: 20px;
+        }
+
+        button {
+            font-size: 24px;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="text"] {
+            font-size: 24px;
+            padding: 10px;
+            text-align: center;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+<h1>Генератор автомобильных номеров</h1>
+
+<form th:method="GET" th:action="@{/public/api/v1/numbers/random}">
+    <button type="submit">Сгенерировать случайный номер</button>
+</form>
+
+<form th:method="GET" th:action="@{/public/api/v1/numbers/next}">
+    <button type="submit">Сгенерировать следующий номер</button>
+</form>
+
+<br>
+
+<form>
+    <input type="text" name="number" th:value="${number}" placeholder="Номер" readonly>
+</form>
+
+</body>
+</html>
