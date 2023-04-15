@@ -11,7 +11,7 @@ spring:
     url: /public/api/v1/numbers
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/car_numbers
+    url: jdbc:postgresql://localhost:5432/car_number_db
     username: postgres
     password: admin
     driver-class-name: org.postgresql.Driver
@@ -20,7 +20,7 @@ spring:
     database: POSTGRESQL
     show-sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect

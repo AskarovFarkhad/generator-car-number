@@ -1,6 +1,17 @@
-server:
-  port: 8080
 
 spring:
   app:
     url: /public/api/v1/numbers
+
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        use_sql_comments: true
+        format_sql: true
+    hibernate:
+        ddl-auto: create-drop
+
+  datasource:
+    url: jdbc:tc:postgresql:14.1:///testDB
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
