@@ -44,4 +44,8 @@ public class CarNumberClient {
     public void removeOffset() {
         offset.poll();
     }
+
+    public void addCarNumberInSetGeneratedNumbers(CarNumber carNumber) {
+        generatedNumbers.add(carNumber);
+    }
 }

@@ -15,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Accessors(chain = true)
 @Table(name = "car_numbers")
-@EqualsAndHashCode(exclude = {"id", "region", "country"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class CarNumber {
 
     @Id
@@ -26,8 +26,10 @@ public class CarNumber {
     @Builder.Default
     private UUID externalId = UUID.randomUUID();
 
+    @EqualsAndHashCode.Include
     private String series;
 
+    @EqualsAndHashCode.Include
     private String registrationNumber;
 
     @Builder.Default

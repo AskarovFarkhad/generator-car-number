@@ -60,6 +60,34 @@ class NumberGeneratorApplicationUnitTests {
         assertEquals(expectedCarNumber, carNumber.toString());
     }
 
+    @Test
+    @DisplayName(value = "Generate next car number if such number exist")
+    void GeneratorCarNumber_GenerateNextCarNumber_ShouldReturnRandomAndCorrectCarNumberIfNextNumberExist() {
+        carNumberClient.setOffset(
+                CarNumber.builder()
+                        .series("ЕХХ")
+                        .registrationNumber("999")
+                        .build());
+
+        carNumberClient.addCarNumberInSetGeneratedNumbers(
+                CarNumber.builder()
+                        .series("ЕХХ")
+                        .registrationNumber("999")
+                        .build());
+
+        carNumberClient.addCarNumberInSetGeneratedNumbers(
+                CarNumber.builder()
+                        .series("КАА")
+                        .registrationNumber("000")
+                        .build());
+
+        carNumberClient.setGenerateCarNumber(generateNextCarNumber);
+        CarNumber carNumber = carNumberClient.execute();
+
+        assertNotNull(carNumber);
+        assertEquals("К001АА 116 RUS", carNumber.toString());
+    }
+
     @ParameterizedTest
     @MethodSource("argsGetRandomCarNumber")
     @DisplayName(value = "Generate random car numbers")

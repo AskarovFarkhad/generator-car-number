@@ -26,19 +26,21 @@ public class GenerateNextCarNumberImpl implements GenerateCarNumber {
 
     @Override
     public CarNumber generate(Set<CarNumber> generatedNumbers, Queue<CarNumber> offset) {
-        Optional<CarNumber> optPreviousCarNumber = Optional.ofNullable(offset.poll());
         CarNumber nextCarNumber;
 
         try {
-            CarNumber previousCarNumber = optPreviousCarNumber
-                    .orElseThrow(() -> new NoSuchElementException("Don't such previous car number"));
-
             do {
+                Optional<CarNumber> optPreviousCarNumber = Optional.ofNullable(offset.poll());
+
+                CarNumber previousCarNumber = optPreviousCarNumber
+                        .orElseThrow(() -> new NoSuchElementException("Don't such previous car number"));
+
                 nextCarNumber = generateNextCarNumber(previousCarNumber);
+
+                offset.add(nextCarNumber);
             } while (generatedNumbers.contains(nextCarNumber));
 
             generatedNumbers.add(nextCarNumber);
-            offset.add(nextCarNumber);
             return nextCarNumber;
         } catch (NoSuchElementException e) {
             log.error("NoSuchElementException: {}. Will be generate random car number", e.getMessage());
